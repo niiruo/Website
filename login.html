@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Tracker | Sign In</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: 0.4s;
+        }
+
+         body {
+           height: 100vh;
+           display: flex;
+           flex-direction: column; 
+           justify-content: center;
+           align-items: center;
+           background: linear-gradient(135deg, #87CEFA, #FFD700);
+           color: #003366;
+}
+
+        /* CARD */
+        .container {
+           width: 340px;
+           overflow: hidden;
+           border-radius: 15px;
+           background: rgba(255, 255, 255, 0.9);
+           box-shadow: 0 10px 30px rgba(135, 206, 250, 0.6);
+           border: 1px solid #FFD700;
+}
+
+        .slider {
+            display: flex;
+            width: 1020px;
+            transition: 0.5s;
+        }
+
+        .card {
+            width: 340px;
+            padding: 25px;
+            text-align: center;
+        }
+
+       h2 {
+          color: lightblue; 
+           margin-bottom: 10px;
+        }
+
+        /* INPUT GROUP */
+        .inputGroup {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 7px 0;
+            border-radius: 7px;
+            border: 1px solid #87CEFA;
+            background: #f0f8ff;
+            color: #003366;
+        }
+
+        /* EYE ICON */
+        .eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: orange;
+            font-size: 14px;
+        }
+
+        /* REMEMBER */
+        .rememberBox {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .rememberBox input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        /* TERMS */
+        .termsBox {
+            display: flex;
+            align-items: flex-start;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: left;
+        }
+
+        .termsBox input {
+            width: auto;
+            margin-right: 6px;
+            margin-top: 3px;
+        }
+
+       .termsBox span {
+        color: yellow;
+        cursor: pointer;
+        }
+
+        /* BUTTON */
+        button {
+          width: 100%;
+          padding: 10px;
+          border: none;
+          border-radius: 7px;
+          background: #FFD700;
+          color: #003366;
+          font-weight: bold;
+          margin-top: 10px;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background: #ffea70;
+        }
+
+        /* LINKS */
+        .link {
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .link span {
+         color: yellow;
+         cursor: pointer;
+        }
+
+        .link span:hover {
+            text-decoration: underline;
+        }
+
+        /* MESSAGES */
+        #loginMsg, #regMsg, #forgotMsg {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            display: none;
+            text-align: center;
+        }
+
+        .avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #87CEFA, #FFD700); 
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 30px;
+          margin: 10px auto;
+          color: black;
+          font-weight: bold;
+      }
+    </style>
+</head>
+<body>
+
+    <header style="margin-bottom: 20px; text-align: center;">    
+        <div onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <img src="pictures/hoteltrackerlogo.png" alt="Hotel Tracker Logo" style="width: 150px; height: auto; display: block; margin: 0 auto;">
+        </div>
+    </header>
+
+    <div class="container" id="authBox">
+        <div class="slider" id="slider">
+
+            <!-- LOGIN CARD -->
+            <div class="card">
+                <h2>Login</h2>
+
+                <input id="loginEmail" placeholder="Email" type="email">
+
+                <div class="inputGroup">
+                    <input type="password" id="loginPass" placeholder="Password">
+                    <span class="eye" onclick="togglePassword('loginPass')">👁</span>
+                </div>
+
+                <div class="rememberBox">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember Me</label>
+                </div>
+
+                <button onclick="login()">Login</button>
+
+                <div class="link">
+                    <span onclick="slide(2)">Forgot Password?</span>
+                </div>
+
+                <div class="link">
+                    Don't have an account? <span onclick="slide(1)">Sign Up</span>
+                </div>
+
+                <p id="loginMsg"></p>
+            </div>
+
+            <!-- REGISTER CARD -->
+            <div class="card">
+                <h2>Register</h2>
+
+                <input id="regName" placeholder="Full Name">
+                <input id="regEmail" placeholder="Email" type="email">
+
+                <div class="inputGroup">
+                    <input type="password" id="regPass" placeholder="Password">
+                    <span class="eye" onclick="togglePassword('regPass')">👁</span>
+                </div>
+
+                <div class="inputGroup">
+                    <input type="password" id="confirmPass" placeholder="Confirm Password">
+                    <span class="eye" onclick="togglePassword('confirmPass')">👁</span>
+                </div>
+
+                <div class="termsBox">
+                    <input type="checkbox" id="agreeTerms">
+                    <label for="agreeTerms">
+                        I agree to <span onclick="alert('Terms & Conditions: By using Hotel Tracker, you agree to our terms of service and privacy policy.')">Terms & Conditions</span>
+                    </label>
+                </div>
+
+                <button onclick="register()">Register</button>
+
+                <div class="link">
+                    Already have an account? <span onclick="slide(0)">Login</span>
+                </div>
+
+                <p id="regMsg"></p>
+            </div>
+
+            <!-- FORGOT PASSWORD CARD -->
+            <div class="card">
+                <h2>Reset Password</h2>
+
+                <input id="forgotEmail" placeholder="Enter your email" type="email">
+
+                <div class="inputGroup">
+                    <input type="password" id="newPassword" placeholder="New Password">
+                    <span class="eye" onclick="togglePassword('newPassword')">👁</span>
+                </div>
+
+                <button onclick="resetPassword()">Reset Password</button>
+
+                <div class="link">
+                    <span onclick="slide(0)">Back to Login</span>
+                </div>
+
+                <p id="forgotMsg"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- DASHBOARD (shown after login) -->
+    <div class="dashboard" id="dash">
+        <h2>Welcome Back!</h2>
+        <div class="avatar" id="avatar">U</div>
+        <p id="userName">User</p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>

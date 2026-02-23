@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Tracker | Philippines</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ── ROTATING HERO ───────────────────────────────────────── */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            margin: 20px;
+            border-radius: 15px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #555; /* shown while first image loads */
+        }
+
+        /* Each slide sits behind the text */
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            z-index: 0;
+        }
+
+        /* Dark overlay so text stays readable on any photo */
+        .hero-slide::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.48);
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        /* Text and dots always on top */
+        .hero h1,
+        .hero p,
+        .hero-dots {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            margin: 0 0 10px;
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        /* Dot indicators */
+        .hero-dots {
+            display: flex;
+            gap: 8px;
+            margin-top: 22px;
+        }
+
+        .hero-dots span {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            cursor: pointer;
+            transition: background 0.4s, transform 0.3s;
+        }
+
+        .hero-dots span.active {
+            background: white;
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar glass-nav">    
+        <div class="logo-container" onclick="window.location.reload()" style="cursor: pointer;">
+            <img src="pictures/hoteltrackerlogo.png" alt="Hotel Tracker Logo" class="logo">
+            <span class="brand">Hotel Tracker</span>
+        </div>
+        <div class="header-search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search destinations...">
+            <button id="searchBtn">Search</button>
+        </div>
+        <nav class="nav-links">
+            <a href="hotels.html"><i class="fa-solid fa-map-location-dot"></i> Destinations</a>
+            <a href="javascript:void(0)" onclick="showFavoritesOnly()"><i class="fa-solid fa-heart"></i> Favorites</a>
+            <a href="profile.html"><i class="fa-solid fa-circle-user"></i> Profile</a>
+            <a href="login.html" class="signin-btn"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>          
+        </nav>
+    </header>
+
+    <!-- ── HERO with rotating background ── -->
+    <section class="hero" id="heroSection">
+        <!-- .hero-slide divs are injected here by JS, BEFORE the text -->
+        <h1>Explore Hotels in the Philippines</h1>
+        <p>Find the best deals on top destinations</p>
+        <div class="hero-dots" id="heroDots"></div>
+    </section>
+
+    <div class="main-layout">
+        <div class="content-area">
+            <div class="filter-sort-bar">
+                <div class="category-filters">
+                    <button class="filter-btn active" onclick="filterHotels('all')">All</button>
+                    <button class="filter-btn" onclick="filterHotels('beach')">Beach</button>
+                    <button class="filter-btn" onclick="filterHotels('city')">City</button>
+                    <button class="filter-btn" onclick="filterHotels('mountain')">Mountain</button>
+                </div>
+                <div class="sort-controls">
+                    <select onchange="sortHotels(this.value)">
+                        <option value="default">Sort: Best Match</option>
+                        <option value="low">Price: Low to High</option>
+                        <option value="high">Price: High to Low</option>
+                    </select>
+                    <select onchange="filterByPrice(this.value)">
+                        <option value="any">Price: Any</option>
+                        <option value="3000">Under ₱3,000</option>
+                        <option value="5000">Under ₱5,000</option>
+                    </select>
+                    <select onchange="filterByRating(this.value)">
+                        <option value="any">Rating: Any Stars</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars & Up</option>
+                    </select>
+                </div>
+            </div>
+            <main class="hotel-grid" id="hotelGrid"></main>
+        </div>
+
+        <aside class="sidebar">
+            <div class="side-card">
+                <h4>Map View</h4>
+                <div class="map-container" id="map" onclick="toggleMapSize()" title="Click to expand/shrink"></div>
+            </div>
+
+            <div class="side-card">
+                <h4>My Favorites ❤️</h4>
+                <ul id="favoritesSidebarList" class="dest-list">
+                    <li style="color: #999; font-size: 0.8rem;">No favorites yet.</li>
+                </ul>
+            </div>
+
+            <div class="side-card">
+                <h4>Top Destinations</h4>
+                <ul class="dest-list">
+                    <li onclick="searchByDest('Boracay')"><i class="fa-solid fa-play"></i> Boracay</li>
+                    <li onclick="searchByDest('Palawan')"><i class="fa-solid fa-play"></i> Palawan</li>
+                    <li onclick="searchByDest('Manila')"><i class="fa-solid fa-play"></i> Manila</li>
+                    <li onclick="searchByDest('Cebu')"><i class="fa-solid fa-play"></i> Cebu</li>
+                    <li onclick="searchByDest('Baguio')"><i class="fa-solid fa-play"></i> Baguio</li>
+                </ul>
+            </div>
+
+            <div class="side-card">
+                <h4>Offers</h4>
+                <ul class="offer-list">
+                    <li onclick="applyOffer('cancellation')"><i class="fa-solid fa-check"></i> Free Cancellation</li>
+                    <li onclick="applyOffer('no-fees')"><i class="fa-solid fa-tags"></i> No Booking Fees</li>
+                    <li onclick="applyOffer('promo')"><i class="fa-solid fa-gift"></i> Holiday Promos</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Hotel Details Modal -->
+    <div id="hotelModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <div class="modal-header">
+                <h2 id="modalName">Hotel Name</h2>
+                <p id="modalLoc">Location Details</p>
+            </div>
+            <div class="modal-gallery">
+                <div class="main-img"><img id="modalImgMain" src="" alt="Main Image"></div>
+                <div class="sub-imgs">
+                    <img id="modalImg1" src="" alt="Sub 1">
+                    <img id="modalImg2" src="" alt="Sub 2">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-about">
+                    <h3>About</h3>
+                    <p id="modalDesc">Description...</p>
+                    <div class="rating-large">
+                        <span id="modalRatingScore">5.0</span>
+                        <span id="modalStars">⭐⭐⭐⭐⭐</span>
+                        <span id="modalReviews">(3,045 reviews)</span>
+                    </div>
+                </div>
+                <div class="modal-reviews-section">
+                    <h3>Reviews & Comments</h3>
+                    <div id="commentsDisplay" class="comments-list"></div>
+                    <div class="comment-input-group">
+                        <textarea id="commentText" placeholder="Write your review here..."></textarea>
+                        <button id="submitCommentBtn" class="view-details-btn">Post Review</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+
+    <!-- ── HERO IMAGE ROTATOR ──────────────────────────────────────
+         Uses your local pictures/ folder.
+         If a local file fails to load, a beautiful online travel photo
+         is used automatically — so the hero NEVER shows plain gray.
+    ─────────────────────────────────────────────────────────────── -->
+    <script>
+    (function () {
+
+        /* Your hotel images (must match filenames inside pictures/) */
+        const localImages = [
+            'pictures/boracay.jpg',
+            'pictures/manila.jpg',
+            'pictures/baguio.jpg',
+            'pictures/cebu.jpg',
+            'pictures/El Nido Island Resort.jpg',
+            'pictures/Siargao Surfers Retreat.jpg',
+            'pictures/Bohol Panglao Resort.jpg',
+            'pictures/Tagaytay Ridge View.jpg',
+            'pictures/Vigan Heritage Mansion.jpg',
+            'pictures/Davao Downtown Inn.jpg',
+        ];
+
+        /* Online fallbacks — used if local file is missing */
+        const fallbacks = [
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80',
+            'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80',
+            'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80',
+            'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&q=80',
+            'https://images.unsplash.com/photo-1570213489059-0aac6626cade?w=1200&q=80',
+            'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1200&q=80',
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=80',
+            'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1200&q=80',
+            'https://images.unsplash.com/photo-1455587734955-081b22074882?w=1200&q=80',
+            'https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?w=1200&q=80',
+        ];
+
+        const hero   = document.getElementById('heroSection');
+        const dotsEl = document.getElementById('heroDots');
+        const h1     = hero.querySelector('h1');   // anchor — slides go before this
+        const slides = [];
+        const dots   = [];
+        let current  = 0;
+        let timer    = null;
+
+        /* ── Build one slide + one dot per image ── */
+        localImages.forEach((src, i) => {
+
+            /* slide */
+            const slide = document.createElement('div');
+            slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
+
+            /* Try local; fall back to Unsplash if it errors */
+            const probe    = new Image();
+            probe.onload   = () => slide.style.backgroundImage = `url('${src}')`;
+            probe.onerror  = () => slide.style.backgroundImage = `url('${fallbacks[i]}')`;
+            probe.src      = src;
+
+            hero.insertBefore(slide, h1);   /* behind text */
+            slides.push(slide);
+
+            /* dot */
+            const dot = document.createElement('span');
+            if (i === 0) dot.classList.add('active');
+            dot.title = src.split('/').pop().replace(/\.[^.]+$/, ''); /* tooltip */
+            dot.addEventListener('click', () => {
+                goTo(i);
+                resetTimer();           /* clicking a dot resets the 3-s countdown */
+            });
+            dotsEl.appendChild(dot);
+            dots.push(dot);
+        });
+
+        /* ── Switch to slide n ── */
+        function goTo(n) {
+            slides[current].classList.remove('active');
+            dots[current].classList.remove('active');
+            current = (n + slides.length) % slides.length;
+            slides[current].classList.add('active');
+            dots[current].classList.add('active');
+        }
+
+        /* ── Auto-advance ── */
+        function startTimer() {
+            timer = setInterval(() => goTo(current + 1), 3000);
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            startTimer();
+        }
+
+        /* Pause while the mouse is over the hero */
+        hero.addEventListener('mouseenter', () => clearInterval(timer));
+        hero.addEventListener('mouseleave', startTimer);
+
+        startTimer();
+
+    })();
+    </script>
+
+</body>
+</html>

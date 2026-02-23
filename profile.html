@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Tracker | User Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar glass-nav">    
+        <div class="logo-container" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <img src="hoteltrackerlogo.png" alt="Hotel Tracker Logo" class="logo">
+            <span class="brand">Hotel Tracker</span>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="hotels.html"><i class="fa-solid fa-map-location-dot"></i> Destinations</a>
+            <a href="javascript:void(0)" onclick="showFavoritesOnly()"><i class="fa-solid fa-heart"></i> Favorites</a>
+            <a href="profile.html"><i class="fa-solid fa-circle-user"></i> Profile</a>
+            <a href="login.html" class="signin-btn"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>          
+        </nav>
+    </header>
+
+    <div class="main-layout" style="justify-content: center; padding-top: 50px; min-height: 80vh;">
+        <div class="profile-container">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <h3><center> USER PROFILE </center></h3>
+                </div>
+                <div class="profile-body" style="padding: 40px 20px; text-align: center;">
+                    <div class="avatar-container">
+                        <div class="avatar-large">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    </div>
+                    <h2 id="display-name" style="margin-bottom: 5px;">Guest User</h2> 
+                    <p id="display-email" class="email-text" style="color: #666; margin-bottom: 25px;">guest@hoteltracker.com</p>
+                    <button class="view-details-btn" style="width: auto; padding: 12px 40px;" onclick="openEditModal()">Edit Profile</button>
+                </div>
+                
+                <div class="info-section" style="padding: 20px 30px; background: rgba(255,255,255,0.05);">
+                    <h4 style="font-size: 0.8rem; color: #888; margin-bottom: 15px; letter-spacing: 1px;">MY INFO</h4>
+                    <div class="info-grid">
+                        <p style="margin-bottom: 10px;"><b>Member Since:</b> February 2026</p>
+                        <p style="margin-bottom: 10px;"><b>Phone:</b> <span id="display-phone">+63 9448465</span></p>
+                        <p style="margin-bottom: 10px;"><b>Date of Birth:</b> <span id="display-dob">01/15/1995</span></p>
+                    </div>
+                </div>
+
+                <div class="social-footer">
+                    <a href="#"><i class="fa-brands fa-facebook"></i> Facebook</a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                    <button class="view-details-btn" style="width: auto; margin-top: 10px; background: #d63031;" onclick="openLogoutModal()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal" onclick="closeEditModal()">×</span>
+            <div class="modal-header">
+                <h2>EDIT PROFILE</h2>
+            </div>
+            <div class="modal-body edit-form">
+                <label>DATE OF BIRTH</label>
+                <input type="text" id="edit-dob" placeholder="mm / dd / yyyy">
+                
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <label>FIRST NAME</label>
+                        <input type="text" id="edit-fname" placeholder="First Name">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>LAST NAME</label>
+                        <input type="text" id="edit-lname" placeholder="Last Name">
+                    </div>
+                </div>
+
+                <label style="margin-top: 15px;">CONTACT NUMBER</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="edit-country-code" style="width: 80px; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                        <option>+63</option>
+                        <option>+1</option>
+                        <option>+44</option>
+                    </select>
+                    <input type="text" id="edit-phone" placeholder="(123) 456-7890" style="flex: 1;">
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button class="view-details-btn" onclick="saveChanges()">Save Changes</button>
+                    <button class="filter-btn" style="flex: 1; margin: 0;" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content" style="max-width: 450px; text-align: center;">
+            <div class="modal-header">
+                <h2>LOG OUT</h2>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-large" style="width: 100px; height: 100px; font-size: 2.5rem; margin-bottom: 10px; margin-left: auto; margin-right: auto; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3 style="margin-bottom: 5px;" id="logout-name">Guest User</h3>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;" id="logout-email">guest@hoteltracker.com</p>
+                
+                <p style="margin-bottom: 25px; font-weight: 500;">Are you sure you want to log out?</p>
+                
+                <div style="display: flex; gap: 15px;">
+                    <button class="filter-btn" style="flex: 1; margin: 0; padding: 12px;" onclick="closeLogoutModal()">Cancel</button>
+                    <button class="view-details-btn" style="flex: 1; margin: 0; background-color: #d63031; padding: 12px;" onclick="logout()">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+     <script src="app.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        /* EDIT MODAL FUNCTIONS */
+        function openEditModal() { 
+            document.getElementById('editModal').style.display = 'block'; 
+        }
+        
+        function closeEditModal() { 
+            document.getElementById('editModal').style.display = 'none'; 
+        }
+
+        /* LOGOUT MODAL FUNCTIONS */
+        function openLogoutModal() {
+            // Update logout modal with current user info
+            const displayName = document.getElementById('display-name').innerText;
+            const displayEmail = document.getElementById('display-email').innerText;
+            
+            document.getElementById('logout-name').innerText = displayName;
+            document.getElementById('logout-email').innerText = displayEmail;
+            
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        
+        function saveChanges() {
+            const fname = document.getElementById('edit-fname').value.trim();
+            const lname = document.getElementById('edit-lname').value.trim();
+            const dob = document.getElementById('edit-dob').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            const countryCode = document.getElementById('edit-country-code').value;
+
+            if (fname || lname) {
+                const fullName = (fname + " " + lname).trim();
+                document.getElementById('display-name').innerText = fullName;
+                
+                // Update in localStorage if user is logged in
+                try {
+                    const userStr = localStorage.getItem(STORAGE_KEYS.USER) || sessionStorage.getItem(STORAGE_KEYS.USER);
+                    if (userStr) {
+                        const user = JSON.parse(userStr);
+                        user.name = fullName;
+                        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+                    }
+                } catch (e) {
+                    console.error('Error updating user:', e);
+                }
+            }
+            
+            if (dob) {
+                document.getElementById('display-dob').innerText = dob;
+            }
+
+            if (phone) {
+                document.getElementById('display-phone').innerText = countryCode + " " + phone;
+            }
+
+            closeEditModal();
+            alert("Changes saved successfully!");
+        }
+
+        /* CLOSE MODALS ON OUTSIDE CLICK */
+        window.onclick = function(event) {
+            let editModal = document.getElementById('editModal');
+            let logoutModal = document.getElementById('logoutModal');
+            if (event.target == editModal) {
+                closeEditModal();
+            }
+            if (event.target == logoutModal) {
+                closeLogoutModal();
+            }
+        }
+
+        /* LOAD USER INFO ON PAGE LOAD */
+        window.addEventListener('load', function() {
+            try {
+                const userStr = localStorage.getItem(STORAGE_KEYS.USER) || sessionStorage.getItem(STORAGE_KEYS.USER);
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    document.getElementById('display-name').innerText = user.name;
+                    document.getElementById('display-email').innerText = user.email;
+                }
+            } catch (e) {
+                console.error('Error loading user profile:', e);
+            }
+        });
+    </script>
+</body>
+</html>

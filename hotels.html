@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Tracker | Available Hotels</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="navbar glass-nav">    
+        <div class="logo-container" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <img src="pictures/hoteltrackerlogo.png" alt="Hotel Tracker Logo" class="logo">
+            <span class="brand">Hotel Tracker</span>
+        </div>
+        <div class="header-search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search destinations...">
+            <button id="searchBtn">Search</button>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="javascript:void(0)" onclick="showFavoritesOnly()"><i class="fa-solid fa-heart"></i> Favorites</a>
+            <a href="profile.html"><i class="fa-solid fa-circle-user"></i> Profile</a>
+            <a href="login.html" class="signin-btn"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>          
+        </nav>
+    </header>
+
+    <h2 class="page-title" style="text-align: center; margin: 40px 0;">Available Hotels</h2>
+
+    <div class="main-layout">
+        <div class="content-area">
+            <div class="hotel-grid" id="hotelGrid"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
