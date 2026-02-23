@@ -14,28 +14,11 @@ let distanceLines = [];
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', initializeApp);
 
-// Remove the hardcoded const hotelDatabase = [...];
-
-async function initializeApp() {
-    try {
-        // Fetch from your new PHP API
-        const response = await fetch('api/get_hotels.php');
-        if (!response.ok) throw new Error("Network response was not ok");
-        
-        // Assign the data to your global hotels variable
-        hotels = await response.json(); 
-        
-        console.log("Hotels loaded from SQL:", hotels);
-    } catch (error) {
-        console.error("Could not load hotels from database:", error);
-        // Optional: you can keep a small hardcoded array here as a fallback
-        hotels = []; 
-    }
-
+function initializeApp() {
+    hotels = [...hotelDatabase];
     loadReviewsFromStorage();
 
-    // Only proceed once 'hotels' is populated
-    if (document.getElementById('map')) initMap();
+    if (document.getElementById('map'))       initMap();
     if (document.getElementById('hotelGrid')) displayHotels(hotels);
 
     setupSearch();
